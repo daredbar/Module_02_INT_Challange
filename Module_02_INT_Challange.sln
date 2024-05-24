@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Module_02_INT_Challange", "Module_02_INT_Challange\Module_02_INT_Challange.csproj", "{6388C431-6BF7-4409-9774-00EE44E276AD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6388C431-6BF7-4409-9774-00EE44E276AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6388C431-6BF7-4409-9774-00EE44E276AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6388C431-6BF7-4409-9774-00EE44E276AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6388C431-6BF7-4409-9774-00EE44E276AD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2C78A5DA-52F2-4BEF-8F05-5CD1B1B54EFB}
+	EndGlobalSection
+EndGlobal
