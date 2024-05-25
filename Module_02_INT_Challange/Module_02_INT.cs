@@ -48,6 +48,12 @@ namespace Module_02_INT_Challange
                 .Where(x => x.FamilyName.Equals("M_Wall Tag"))
                 .First();
 
+            FamilySymbol curtainWallTag = new FilteredElementCollector(doc)
+                .OfClass(typeof(FamilySymbol))
+                .Cast<FamilySymbol>()
+                .Where(x => x.FamilyName.Equals("M_Curtain Wall Tag"))
+                .First();
+
             FamilySymbol doorTag = new FilteredElementCollector(doc)
                 .OfClass(typeof(FamilySymbol))
                 .Cast<FamilySymbol>()
@@ -80,10 +86,10 @@ namespace Module_02_INT_Challange
 
             // Dictionary
             Dictionary<string, FamilySymbol> tags = new Dictionary<string, FamilySymbol>();
-            //tags.Add("Walls", wallTag);
+            tags.Add("Walls", wallTag);
             tags.Add("Doors", doorTag);
-            tags.Add("Furnitures", furnTag);
-            tags.Add("Light Fixtures", lightFixTag);
+            tags.Add("Furniture", furnTag);
+            tags.Add("Lighting Fixtures", lightFixTag);
             tags.Add("Rooms", roomTag);
             tags.Add("Windows", windowTag);
 
@@ -101,51 +107,134 @@ namespace Module_02_INT_Challange
 
                     if (curLoc == null)
                         continue;
-
                     locPoint = curLoc as LocationPoint;
-                    if (locPoint != null)
+
+                    if (curElem.Category.Name == "Windows")
                     {
                         instPoint = locPoint.Point;
+                        instPoint = new XYZ(instPoint.X, instPoint.Y + 3, instPoint.Z);
                     }
+
                     else
                     {
-                        locCurve = curLoc as LocationCurve;
-                        Curve curCurve = locCurve.Curve;
-
-                        instPoint = Utils.GetMidPointBetweenTwoPoints(curCurve.GetEndPoint(0), curCurve.GetEndPoint(1));
-                    }
-
-                    //Check Wall Type
-                    if (curElem.Category.Name == "Walls")
-                    {
-                        Wall curWall = curElem as Wall;
-                        WallType curWallTpe = curWall.WallType;
-
-                        if (curWallTpe.Kind == WallKind.Curtain)
+                        if (locPoint != null)
                         {
+                            instPoint = locPoint.Point;
+                        }
+                        else
+                        {
+                            locCurve = curLoc as LocationCurve;
+                            Curve curCurve = locCurve.Curve;
 
+                            instPoint = Utils.GetMidPointBetweenTwoPoints(curCurve.GetEndPoint(0), curCurve.GetEndPoint(1));
                         }
                     }
-                    FamilySymbol curTagType = tags[curElem.Category.Name];
 
-                    Reference curRef = new Reference(curElem);
+                            
 
-                    //Place Tag
-                    IndependentTag newTag = IndependentTag.Create(doc, curTagType.Id, curView.Id, curRef, false, TagOrientation.Horizontal, instPoint);
+                    ViewType curViewType = curView.ViewType;
+
+                    if (curViewType == ViewType.FloorPlan)
+                    {
+                        List<string> floorPlanCat = new List<string>
+                        {"Walls","Doors","Furniture","Rooms","Windows"};
+
+                        if (floorPlanCat.Contains(curElem.Category.Name))
+                        {
+                        FamilySymbol curTagType = tags[curElem.Category.Name];
+                        //Check Wall Type
+                            if (curElem.Category.Name == "Walls")
+                            {
+                            Wall curWall = curElem as Wall;
+                            WallType curWallTpe = curWall.WallType;
+
+                                if (curWallTpe.Kind == WallKind.Curtain)
+                                {
+                                    curTagType = curtainWallTag;
+                                }
+                                //Check for Door Type
+                                //else if (curWallTpe.Name == "M_Curtain Wall Dbl Glass")
+                                //{
+                                //    curTagType = doorTag;
+                                //}
+                                else
+                                {
+                                    curTagType = wallTag;
+                                }
+                            }
+
+                        //FamilySymbol curTagType2 = tags[curElem.Category.Name];
+
+                        //    if (curElem.Category.Name == "Doors")
+                        //    {
+                        //    Wall curtWall = curElem as Wall;
+                        //    WallType curWallDType = curtWall.WallType;
+
+                        //        //Check for Door Type
+                        //        if (curWallDType.Name == "M_Curtain Wall Dbl Glass")
+                        //        {
+                        //            curTagType2 = doorTag;
+                        //        }
+                        //    }
+
+
+                        Reference curRef = new Reference(curElem);
+
+                        //Place Tag
+                        IndependentTag newTag = IndependentTag.Create(doc, curTagType.Id, curView.Id, curRef, false, TagOrientation.Horizontal, instPoint);
+                        }
+                    }
+
+                    else if (curViewType == ViewType.CeilingPlan)
+                    {
+                        List<string> ceilingPlanCat = new List<string>
+                        { "Rooms", "Lighting Fixtures"};
+                        if (ceilingPlanCat.Contains(curElem.Category.Name))
+                        {
+                            FamilySymbol curTagType = tags[curElem.Category.Name];
+
+                            Reference curRef = new Reference(curElem);
+
+                            //Place Tag
+                            IndependentTag newTag = IndependentTag.Create(doc, curTagType.Id, curView.Id, curRef, false, TagOrientation.Horizontal, instPoint);
+                        }
+                    }
+
+                    else if (curViewType == ViewType.Section)
+                    {
+                        List<string> sectionCat = new List<string>
+                        { "Rooms"};
+                        if (sectionCat.Contains(curElem.Category.Name))
+                        {
+                            FamilySymbol curTagType = tags[curElem.Category.Name];
+
+                            Reference curRef = new Reference(curElem);
+
+                            //Place Tag
+                            IndependentTag newTag = IndependentTag.Create(doc, curTagType.Id, curView.Id, curRef, false, TagOrientation.Horizontal, new XYZ(instPoint.X,instPoint.Y, instPoint.Z + 3));
+                        }
+                    }
+
+                    else if(curViewType == ViewType.AreaPlan)
+                    {
+                        //TaskDialog.Show("Test", "This is an area Plan!");
+
+                        //Place Area Tag
+                        if (curElem.Category.Name == "Areas")
+                        {
+                            ViewPlan curAreaPlan = curView as ViewPlan;
+                            Area curArea = curElem as Area;
+
+                            AreaTag curAreaTag = doc.Create.NewAreaTag(curAreaPlan, curArea, new UV(instPoint.X, instPoint.Y));
+                            curAreaTag.TagHeadPosition = new XYZ(instPoint.X, instPoint.Y,0);
+                            curAreaTag.HasLeader = false;
+                        }
+                    }
 
                 }
 
-
-
-
-
-
-
                 t.Commit();
             }
-
-
-
 
             return Result.Succeeded;
         }
