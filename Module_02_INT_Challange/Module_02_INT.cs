@@ -93,6 +93,8 @@ namespace Module_02_INT_Challange
             tags.Add("Rooms", roomTag);
             tags.Add("Windows", windowTag);
 
+            int tagCount = 0;
+
             using(Transaction t = new Transaction(doc))
             {
                 t.Start("Tag All");
@@ -151,37 +153,30 @@ namespace Module_02_INT_Challange
                                 if (curWallTpe.Kind == WallKind.Curtain)
                                 {
                                     curTagType = curtainWallTag;
+
+                                    //Check for Door Type under curtain wall
+                                    foreach (ElementId subEleId in curWall.FindInserts(false, false, false, false))
+                                    {
+                                        Element subEle = doc.GetElement(subEleId);
+                                        if (subEle is FamilyInstance && subEle.Category.Id.IntegerValue == (int)BuiltInCategory.OST_Doors)
+                                        {
+                                            Reference subRef = new Reference(subEle);
+                                            IndependentTag newTag2 = IndependentTag.Create(doc, doorTag.Id, curView.Id, subRef, false, TagOrientation.Horizontal, instPoint);
+                                        }
+                                    }
                                 }
-                                //Check for Door Type
-                                //else if (curWallTpe.Name == "M_Curtain Wall Dbl Glass")
-                                //{
-                                //    curTagType = doorTag;
-                                //}
+
                                 else
                                 {
                                     curTagType = wallTag;
                                 }
                             }
 
-                        //FamilySymbol curTagType2 = tags[curElem.Category.Name];
-
-                        //    if (curElem.Category.Name == "Doors")
-                        //    {
-                        //    Wall curtWall = curElem as Wall;
-                        //    WallType curWallDType = curtWall.WallType;
-
-                        //        //Check for Door Type
-                        //        if (curWallDType.Name == "M_Curtain Wall Dbl Glass")
-                        //        {
-                        //            curTagType2 = doorTag;
-                        //        }
-                        //    }
-
-
                         Reference curRef = new Reference(curElem);
 
                         //Place Tag
                         IndependentTag newTag = IndependentTag.Create(doc, curTagType.Id, curView.Id, curRef, false, TagOrientation.Horizontal, instPoint);
+                        tagCount++;
                         }
                     }
 
@@ -197,6 +192,7 @@ namespace Module_02_INT_Challange
 
                             //Place Tag
                             IndependentTag newTag = IndependentTag.Create(doc, curTagType.Id, curView.Id, curRef, false, TagOrientation.Horizontal, instPoint);
+                            tagCount++;
                         }
                     }
 
@@ -212,6 +208,7 @@ namespace Module_02_INT_Challange
 
                             //Place Tag
                             IndependentTag newTag = IndependentTag.Create(doc, curTagType.Id, curView.Id, curRef, false, TagOrientation.Horizontal, new XYZ(instPoint.X,instPoint.Y, instPoint.Z + 3));
+                            tagCount++;
                         }
                     }
 
@@ -228,6 +225,7 @@ namespace Module_02_INT_Challange
                             AreaTag curAreaTag = doc.Create.NewAreaTag(curAreaPlan, curArea, new UV(instPoint.X, instPoint.Y));
                             curAreaTag.TagHeadPosition = new XYZ(instPoint.X, instPoint.Y,0);
                             curAreaTag.HasLeader = false;
+                            tagCount++;
                         }
                     }
 
@@ -235,6 +233,7 @@ namespace Module_02_INT_Challange
 
                 t.Commit();
             }
+            TaskDialog.Show("Tag Count", $"Total Tags places {tagCount}");
 
             return Result.Succeeded;
         }
