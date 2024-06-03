@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Module_02_INTv2.cs" />
     <Compile Include="Module_02_INT.cs" />
     <Compile Include="Utils\ButtonDataClass.cs" />
     <Compile Include="Command2.cs" />

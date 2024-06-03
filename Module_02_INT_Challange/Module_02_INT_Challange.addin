@@ -27,6 +27,15 @@
 	<VendorId>com.YOUR COMPANY NAME</VendorId>
 	<VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>
   </AddIn>
+  <AddIn Type="Command">
+	<Text>Module_02_INT_Challange - Module_02_INTv2</Text>
+	<Description>Some description for Module_02_INT_Challange</Description>
+	<Assembly>Module_02_INT_Challange.dll</Assembly>
+	<FullClassName>Module_02_INT_Challange.Module_02_INTv2</FullClassName>
+	<ClientId>CC48F1C8-DE22-4A48-AB4A-097962A04A16</ClientId>
+	<VendorId>com.YOUR COMPANY NAME</VendorId>
+	<VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>
+  </AddIn>
   <AddIn Type="Application">
     <Name>Module_02_INT_Challange</Name>
     <Assembly>Module_02_INT_Challange.dll</Assembly>

@@ -108,31 +108,49 @@ namespace Module_02_INT_Challange
                     Location curLoc = curElem.Location;
 
                     if (curLoc == null)
-                        continue;
-                    locPoint = curLoc as LocationPoint;
-
-                    if (curElem.Category.Name == "Windows")
                     {
-                        instPoint = locPoint.Point;
-                        instPoint = new XYZ(instPoint.X, instPoint.Y + 3, instPoint.Z);
-                    }
-
-                    else
-                    {
-                        if (locPoint != null)
+                        //Use Bounding box for Curtain Doors
+                        if (curElem.Category.Name == "Doors")
                         {
-                            instPoint = locPoint.Point;
+                            BoundingBoxXYZ bBox = curElem.get_BoundingBox(curView);
+                            if (bBox != null)
+                            {
+                                instPoint = (bBox.Min + bBox.Max) / 2;
+                            }
+                            else
+                                continue;
+                            
                         }
                         else
-                        {
-                            locCurve = curLoc as LocationCurve;
-                            Curve curCurve = locCurve.Curve;
+                            continue;
+                    }
+                    else
+                    {
+                        locPoint = curLoc as LocationPoint;
 
-                            instPoint = Utils.GetMidPointBetweenTwoPoints(curCurve.GetEndPoint(0), curCurve.GetEndPoint(1));
+                        if (curElem.Category.Name == "Windows")
+                        {
+                            instPoint = locPoint.Point;
+                            instPoint = new XYZ(instPoint.X, instPoint.Y + 3, instPoint.Z);
                         }
+
+                        else
+                        {
+                            if (locPoint != null)
+                            {
+                                instPoint = locPoint.Point;
+                            }
+                            else
+                            {
+                                locCurve = curLoc as LocationCurve;
+                                Curve curCurve = locCurve.Curve;
+
+                                instPoint = Utils.GetMidPointBetweenTwoPoints(curCurve.GetEndPoint(0), curCurve.GetEndPoint(1));
+                            }
+                        }
+
                     }
 
-                            
 
                     ViewType curViewType = curView.ViewType;
 
@@ -153,17 +171,6 @@ namespace Module_02_INT_Challange
                                 if (curWallTpe.Kind == WallKind.Curtain)
                                 {
                                     curTagType = curtainWallTag;
-
-                                    //Check for Door Type under curtain wall
-                                    foreach (ElementId subEleId in curWall.FindInserts(false, false, false, false))
-                                    {
-                                        Element subEle = doc.GetElement(subEleId);
-                                        if (subEle is FamilyInstance && subEle.Category.Id.IntegerValue == (int)BuiltInCategory.OST_Doors)
-                                        {
-                                            Reference subRef = new Reference(subEle);
-                                            IndependentTag newTag2 = IndependentTag.Create(doc, doorTag.Id, curView.Id, subRef, false, TagOrientation.Horizontal, instPoint);
-                                        }
-                                    }
                                 }
 
                                 else
